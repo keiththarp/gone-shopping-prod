@@ -1,7 +1,12 @@
+import SignUp from "./components/SignUp.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+
 function App() {
   return (
     <>
-      <p>Hello World</p>
+      <AuthProvider>
+        <SignUp />
+      </AuthProvider>
     </>
   );
 }
