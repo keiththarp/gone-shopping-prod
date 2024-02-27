@@ -2,7 +2,7 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 
 import { auth } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const AuthContext = React.createContext();
 
@@ -12,6 +12,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
+  const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState();
 
   useEffect(() => {
@@ -23,13 +24,19 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  function signUp(email, password) {
-    console.log("got here");
+  function signUp(email, password, name) {
+    console.log("got here ", name);
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed up
-        const user = userCredential.user;
-        // ...
+      .then(() => {
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        })
+          .then(() => {
+            setDisplayName(auth.currentUser.displayName);
+          })
+          .catch((error) => {
+            console.log("Error updating Display Name ", error);
+          });
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -38,9 +45,16 @@ export function AuthProvider({ children }) {
       });
   }
 
+  function logout() {
+    console.log("logout got here");
+    return auth.signOut();
+  }
+
   const value = {
+    displayName,
     currentUser,
     signUp,
+    logout,
   };
 
   return (

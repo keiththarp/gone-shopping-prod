@@ -12,8 +12,11 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Alert from "@mui/material/Alert";
+import styled from "styled-components";
 
 import { useAuth } from "../context/AuthContext.jsx";
+
+const internals = {};
 
 function Copyright(props) {
   return (
@@ -31,6 +34,7 @@ function Copyright(props) {
 }
 
 export default function SignUp() {
+  const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confPasswordRef = useRef();
@@ -41,6 +45,8 @@ export default function SignUp() {
 
   const { signUp, currentUser } = useAuth();
 
+  const { SignUpAlert } = internals;
+
   const passwordCheck = () => {
     if (passwordRef.current.value !== confPasswordRef.current.value) {
       return setPasswordValidated(false);
@@ -50,15 +56,21 @@ export default function SignUp() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const password = passwordRef.current.value;
 
-    if (passwordRef.current.value !== confPasswordRef.current.value) {
+    if (password !== confPasswordRef.current.value) {
       return setError("Passwords must match.");
     }
 
+    if (password.length < 8) {
+      return setError("Password length must be at least 8 characters");
+    }
+
     try {
+      console.log(nameRef.current.value);
       setError("");
       setLoading(true);
-      await signUp(emailRef.current.value, passwordRef.current.value);
+      await signUp(emailRef.current.value, password, nameRef.current.value);
     } catch {
       setError("Failed to create new account.");
     }
@@ -67,7 +79,16 @@ export default function SignUp() {
 
   return (
     <Container component="main" maxWidth="xs">
-      {error && <Alert severity="error">{error}</Alert>}
+      {error && (
+        <SignUpAlert
+          severity="error"
+          onClick={() => {
+            setError("");
+          }}
+        >
+          {error} X
+        </SignUpAlert>
+      )}
       <Box
         sx={{
           marginTop: 8,
@@ -76,7 +97,6 @@ export default function SignUp() {
           alignItems: "center",
         }}
       >
-        {currentUser && currentUser.email}
         <Avatar sx={{ m: 1, bgcolor: "disabled" }}>
           <LockOutlinedIcon />
         </Avatar>
@@ -84,6 +104,17 @@ export default function SignUp() {
           Sign Up
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            inputRef={nameRef}
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="User Name"
+            name="user-name"
+            autoComplete="user-name"
+            autoFocus
+          />
           <TextField
             inputRef={emailRef}
             margin="normal"
@@ -148,3 +179,7 @@ export default function SignUp() {
     </Container>
   );
 }
+
+internals.SignUpAlert = styled(Alert)`
+  cursor: pointer;
+`;
