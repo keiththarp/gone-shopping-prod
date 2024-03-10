@@ -2,7 +2,11 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 
 import { auth } from "../firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
 const AuthContext = React.createContext();
 
@@ -14,10 +18,15 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState();
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
+      if (user) {
+        setCurrentUser(user);
+        setDisplayName(user.displayName);
+      }
+
       setLoading(false);
     });
 
@@ -25,7 +34,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   function signUp(email, password, name) {
-    console.log("got here ", name);
+    setErrorMessage("");
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
         updateProfile(auth.currentUser, {
@@ -36,24 +45,38 @@ export function AuthProvider({ children }) {
           })
           .catch((error) => {
             console.log("Error updating Display Name ", error);
+            setErrorMessage(error.message);
+            console.log(error.code, error.message);
           });
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        setErrorMessage(error.message);
+        console.log(error.code, error.message);
+      });
+  }
+
+  function signIn(email, password) {
+    setErrorMessage("");
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        setDisplayName(auth.currentUser.displayName);
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+        console.log(error.code, error.message);
       });
   }
 
   function logout() {
-    console.log("logout got here");
     return auth.signOut();
   }
 
   const value = {
     displayName,
     currentUser,
+    errorMessage,
     signUp,
+    signIn,
     logout,
   };
 

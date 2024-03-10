@@ -13,6 +13,17 @@ const theme = createTheme({
       hover: "#969694",
     },
   },
+  overrides: {
+    MuiLink: {
+      root: {
+        textDecoration: "none", // Remove underline
+        color: "inherit", // Inherit text color
+        "&:hover": {
+          textDecoration: "underline", // Add underline on hover
+        },
+      },
+    },
+  },
 });
 
 export default theme;

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -31,45 +32,34 @@ function Copyright(props) {
   );
 }
 
-export default function SignUp() {
-  const nameRef = useRef();
+export default function SignIp() {
   const emailRef = useRef();
   const passwordRef = useRef();
-  const confPasswordRef = useRef();
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [passwordValidated, setPasswordValidated] = useState();
 
-  const { signUp, currentUser } = useAuth();
+  const { signIn, errorMessage, currentUser } = useAuth();
+
+  const navigate = useNavigate();
 
   const { SignUpAlert } = internals;
 
-  const passwordCheck = () => {
-    if (passwordRef.current.value !== confPasswordRef.current.value) {
-      return setPasswordValidated(false);
-    }
-    return setPasswordValidated(true);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const password = passwordRef.current.value;
-
-    if (password !== confPasswordRef.current.value) {
-      return setError("Passwords must match.");
-    }
-
-    if (password.length < 8) {
-      return setError("Password length must be at least 8 characters");
-    }
 
     try {
       setError("");
       setLoading(true);
-      await signUp(emailRef.current.value, password, nameRef.current.value);
+      await signIn(emailRef.current.value, passwordRef.current.value);
+      if (currentUser) {
+        console.log(currentUser);
+        emailRef.current.value = "";
+        passwordRef.current.value = "";
+        navigate("/");
+      }
     } catch {
-      setError("Failed to create new account.");
+      setError("Failed to sign in");
     }
     setLoading(false);
   };
@@ -98,20 +88,12 @@ export default function SignUp() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign Up
+          Sign In
+        </Typography>
+        <Typography variant="h6" sx={{ color: "#ff0000" }}>
+          {errorMessage && errorMessage}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            inputRef={nameRef}
-            margin="normal"
-            required
-            fullWidth
-            id="name"
-            label="User Name"
-            name="user-name"
-            autoComplete="user-name"
-            autoFocus
-          />
           <TextField
             inputRef={emailRef}
             margin="normal"
@@ -134,31 +116,23 @@ export default function SignUp() {
             id="password"
             // autoComplete="current-password"
           />
-          <TextField
-            inputRef={confPasswordRef}
-            margin="normal"
-            required
-            fullWidth
-            name="confirm-password"
-            label="Confirm Password"
-            type="password"
-            id="confirm-password"
-            onChange={passwordCheck}
-          />
           <Button
             type="submit"
             fullWidth
-            disabled={loading || !passwordValidated}
+            disabled={loading}
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign Up
+            Sign In
           </Button>
-          <Grid container sx={{ justifyContent: "center" }}>
-            <Grid item>
-              <Link to={"/signin"} variant="body2">
-                {"Already have an account? Sign In"}
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
               </Link>
+            </Grid>
+            <Grid item>
+              <Link to={"/signup"}>{"No account? Sign Up"}</Link>
             </Grid>
           </Grid>
         </Box>
