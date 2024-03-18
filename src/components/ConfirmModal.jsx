@@ -5,10 +5,9 @@ import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
 
 export default function ConfirmDialog(props) {
-  const { onConfirm, isOpen } = props;
+  const { onConfirm, isOpen, message } = props;
 
   const handleClose = (confirmLogout) => {
-    console.log(confirmLogout);
     onConfirm(confirmLogout);
   };
 
@@ -16,7 +15,7 @@ export default function ConfirmDialog(props) {
     <Dialog open={isOpen}>
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "30px" }}>
-          Continue with Log out?
+          Continue with {message || "Action"}?
         </DialogTitle>
         <Box
           sx={{
@@ -34,6 +33,7 @@ export default function ConfirmDialog(props) {
 }
 
 ConfirmDialog.propTypes = {
-  onClose: PropTypes.func,
-  open: PropTypes.bool,
+  onConfirm: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  message: PropTypes.string,
 };

@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -41,8 +40,6 @@ export default function SignIp() {
 
   const { signIn, errorMessage, currentUser } = useAuth();
 
-  const navigate = useNavigate();
-
   const { SignUpAlert } = internals;
 
   const handleSubmit = async (event) => {
@@ -52,12 +49,9 @@ export default function SignIp() {
       setError("");
       setLoading(true);
       await signIn(emailRef.current.value, passwordRef.current.value);
-      if (currentUser) {
-        console.log(currentUser);
-        emailRef.current.value = "";
-        passwordRef.current.value = "";
-        navigate("/");
-      }
+
+      emailRef.current.value = "";
+      passwordRef.current.value = "";
     } catch {
       setError("Failed to sign in");
     }

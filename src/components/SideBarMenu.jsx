@@ -37,7 +37,8 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
     try {
       await logout();
       setShowModal((prev) => !prev);
-      navigate("/signin");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      // navigate("/signin");
     } catch {
       console.log("error", currentUser);
     }
@@ -53,13 +54,13 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
       }}
     >
       <List>
-        <Link to={"/"}>
+        <Link to={"/all-items"}>
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
                 <ChecklistIcon />
               </ListItemIcon>
-              <ListItemText>Main List</ListItemText>
+              <ListItemText>All Items</ListItemText>
             </ListItemButton>
           </ListItem>
         </Link>

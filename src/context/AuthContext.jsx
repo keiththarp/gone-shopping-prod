@@ -1,5 +1,6 @@
 import React from "react";
 import { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { auth } from "../firebase";
 import {
@@ -17,8 +18,10 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [displayName, setDisplayName] = useState("");
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -61,6 +64,9 @@ export function AuthProvider({ children }) {
       .then(() => {
         setDisplayName(auth.currentUser.displayName);
       })
+      .then(() => {
+        navigate("/");
+      })
       .catch((error) => {
         setErrorMessage(error.message);
         console.log(error.code, error.message);
@@ -68,7 +74,11 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    return auth.signOut();
+    setCurrentUser(null);
+    setDisplayName("");
+    auth.signOut();
+    navigate("/signin");
+    return;
   }
 
   const value = {
