@@ -64,14 +64,16 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
             </ListItemButton>
           </ListItem>
         </Link>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <FavoriteIcon />
-            </ListItemIcon>
-            <ListItemText>Favorites</ListItemText>
-          </ListItemButton>
-        </ListItem>
+        <Link to={"/"}>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <FavoriteIcon />
+              </ListItemIcon>
+              <ListItemText>sortable list</ListItemText>
+            </ListItemButton>
+          </ListItem>
+        </Link>
       </List>
       <Divider />
       <List>

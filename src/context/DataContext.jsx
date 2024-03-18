@@ -19,15 +19,15 @@ export function DataProvider({ children }) {
   const getAllItems = async () => {
     const querySnapshot = await getDocs(collection(db, "items"));
     const items = [];
-    console.log(querySnapshot);
     querySnapshot.forEach((doc) => {
       const item = doc.data();
       items.push({
         id: doc.id,
         name: item.name || "--",
         flavor: item.flavor,
-        isFavorite: item.isFavorite,
+        isFavorite: item.isFavorite || false,
         price: item.price || "--",
+        rank: item.rank || 0,
         section: item.sectionData ? item.sectionData.name : "--",
         preferredStore: item.storeData ? item.storeData.name : "--",
         notes: item.notes,
