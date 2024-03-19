@@ -24,7 +24,6 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useData } from "../context/DataContext";
 
 function descendingComparator(a, b, orderBy) {
-  console.log("1");
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -35,7 +34,6 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  console.log("2");
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -46,7 +44,6 @@ function getComparator(order, orderBy) {
 // only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
 // with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
-  console.log("3");
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -87,10 +84,8 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  console.log("4");
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
-    console.log(property, event);
     onRequestSort(event, property);
   };
 
@@ -127,11 +122,10 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
+  orderBy: PropTypes.string,
 };
 
 function EnhancedTableToolbar(props) {
-  console.log("5");
   const { numSelected } = props;
 
   return (
@@ -198,7 +192,6 @@ export default function SortableList() {
 
   useEffect(() => {
     const tempArray = [];
-    console.log("6");
     allItems.map((item) => {
       tempArray.push({
         id: item.id,
@@ -216,17 +209,13 @@ export default function SortableList() {
     handleRequestSort("name");
   }, [allItems]);
 
-  console.log("7");
-
   const handleRequestSort = (_event, property) => {
-    console.log("8");
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   const handleClick = (_event, id) => {
-    console.log("9");
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -246,12 +235,10 @@ export default function SortableList() {
   };
 
   const handleChangePage = (_event, newPage) => {
-    console.log("10");
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    console.log("11");
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
