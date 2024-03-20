@@ -11,110 +11,103 @@ import {
   Dialog,
   Box,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 
-import AddStoreSelect from "./AddStoreSelect";
-import AddSectionSelect from "./AddSectionSelect";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useData } from "../context/DataContext";
 
-export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
+const abbrMaker = (input) => {
+  const words = input.trim().split(" ");
+  if (words.length === 1) {
+    return words[0].slice(0, 3).toUpperCase();
+  } else {
+    return words
+      .slice(0, 3)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase();
+  }
+};
+
+export default function StoreModal({ isOpen, handleStoreModalIsOpen }) {
   const nameRef = useRef();
-  const priceRef = useRef();
+  const abbrRef = useRef("treat");
   const notesRef = useRef();
-  const flavorRef = useRef();
+  const cityRef = useRef();
 
-  const [formData, setFormData] = useState({ key: "value" });
-  const [isFavorite, setIsFavorite] = useState(false);
-  const { getAllItems } = useData();
+  const [abbrValue, setAbbrValue] = useState();
+  const [formData, setFormData] = useState({});
+  const { getAllStores } = useData();
 
-  const handleAddItemFormChange = () => {
+  let abv;
+
+  const handleStoreFormChange = () => {
     setFormData((prev) => ({
       ...prev,
       name: nameRef.current.value,
-      flavor: flavorRef.current.value,
-      isFavorite: isFavorite,
-      price: priceRef.current.value,
+      abbr: abbrRef.current.value,
+      city: cityRef.current.value,
       notes: notesRef.current.value,
     }));
+
+    abv = abbrMaker(nameRef.current.value);
+    setAbbrValue(abv);
   };
 
   const handleSave = () => {
-    addDoc(collection(db, "items"), formData);
+    addDoc(collection(db, "stores"), formData);
 
-    handleAddItemIsOpen(false);
-    getAllItems();
-  };
-
-  const handleChangeStoreSelect = (storeData) => {
-    setFormData((prev) => ({
-      ...prev,
-      storeData,
-    }));
-  };
-
-  const handleChangeSectionSelect = (sectionData) => {
-    setFormData((prev) => ({
-      ...prev,
-      sectionData,
-    }));
+    handleStoreIsOpen(false);
+    getAllStores();
   };
 
   return (
     <Dialog open={isOpen}>
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
-          Add an Item
+          Add a Store
         </DialogTitle>
         <FormControl size="small" sx={{ minWidth: "255px" }}>
           <TextField
-            onChange={handleAddItemFormChange}
+            onChange={handleStoreFormChange}
             inputRef={nameRef}
             id="outlined-basic"
             label="Name"
             variant="standard"
           />
         </FormControl>
-        <FavoriteBox onClick={() => setIsFavorite((prev) => !prev)}>
-          <IconButton>
-            {isFavorite ? (
-              <StarIcon sx={{ color: "#ff0000" }} />
-            ) : (
-              <StarBorderIcon />
-            )}
-          </IconButton>
-          <Typography> Mark as Favorite! </Typography>
-        </FavoriteBox>
+
+        <FormControl
+          size="small"
+          sx={{ paddingTop: "17px", minWidth: "255px" }}
+        >
+          <TextField
+            id="abbr-input"
+            variant="standard"
+            InputProps={{
+              readOnly: true,
+            }}
+            label="Abbreviation"
+            placeholder="Abbreviation"
+            value={abbrValue}
+          />
+        </FormControl>
 
         <FormControl size="small" sx={{ minWidth: "255px" }}>
           <TextField
-            onChange={handleAddItemFormChange}
-            inputRef={flavorRef}
+            onChange={handleStoreFormChange}
+            inputRef={cityRef}
             id="outlined-basic"
-            label="Type/Flavor"
+            label="City"
             variant="standard"
           />
         </FormControl>
-        <AddSectionSelect
-          handleChangeSectionSelect={handleChangeSectionSelect}
-        />
-        <AddStoreSelect handleChangeStoreSelect={handleChangeStoreSelect} />
-        <FormControl fullWidth sx={{ mt: 2 }} variant="standard">
-          <Input
-            onChange={handleAddItemFormChange}
-            inputRef={priceRef}
-            id="standard-adornment-amount"
-            placeholder="Current Price"
-            startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          />
-        </FormControl>
+
         <FormControl>
           <Textarea
-            onChange={handleAddItemFormChange}
+            onChange={handleStoreFormChange}
             ref={notesRef}
             aria-label="empty textarea"
             placeholder="Notes"
@@ -133,7 +126,7 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
             SAVE
           </Button>
           <Button
-            onClick={() => handleAddItemIsOpen(false)}
+            onClick={() => handleStoreModalIsOpen(false)}
             variant="contained"
           >
             CANCEL

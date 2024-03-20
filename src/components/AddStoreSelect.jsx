@@ -7,9 +7,11 @@ import IconButton from "@mui/material/IconButton";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 
 import { useData } from "../context/DataContext";
+import { useVisibility } from "../context/VisibilityContext";
 
 export default function AddStoreSelect({ handleChangeStoreSelect }) {
   const { allStores } = useData();
+  const { handleStoreModalIsOpen } = useVisibility();
   const [selectedStore, setSelectedStore] = useState("");
   const handleClick = (storeData) => {
     handleChangeStoreSelect(storeData);
@@ -35,7 +37,10 @@ export default function AddStoreSelect({ handleChangeStoreSelect }) {
             {store.name}
           </MenuItem>
         ))}
-        <MenuItem onClick={() => console.log("clicked")}>
+        <MenuItem
+          value="Add Store"
+          onClick={() => handleStoreModalIsOpen(true)}
+        >
           <IconButton>
             <AddCircleOutlineOutlinedIcon
               sx={{ fontSize: 30, paddingRight: "10px" }}

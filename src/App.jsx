@@ -1,6 +1,7 @@
 import Container from "@mui/material/Container";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { VisibilityProvider } from "./context/VisibilityContext.jsx";
 import { DataProvider } from "./context/DataContext.jsx";
 import ProtectedRoutes from "./router/ProtectedRoutes.jsx";
 
@@ -17,16 +18,18 @@ function App() {
       <Container maxWidth="sm">
         <AuthProvider>
           <DataProvider>
-            <Header />
-            <Routes>
-              <Route element={<ProtectedRoutes />}>
-                <Route path="/" element={<MainList />} />
-                <Route path="/all-items" element={<AllItemsPage />} />
-                <Route path="/profile" element={<Profile />} />
-              </Route>
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/signin" element={<SignIn />} />
-            </Routes>
+            <VisibilityProvider>
+              <Header />
+              <Routes>
+                <Route element={<ProtectedRoutes />}>
+                  <Route path="/" element={<MainList />} />
+                  <Route path="/all-items" element={<AllItemsPage />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Route>
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/signin" element={<SignIn />} />
+              </Routes>
+            </VisibilityProvider>
           </DataProvider>
         </AuthProvider>
       </Container>

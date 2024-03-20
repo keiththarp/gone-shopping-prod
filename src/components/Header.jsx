@@ -12,15 +12,18 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 
 import SideBarMenu from "./SideBarMenu";
 import AddItemModal from "../components/AddItemModal";
+import StoreModal from "./StoreModal";
 import useIconMaker from "../utils/useIconMaker";
 
 import { useAuth } from "../context/AuthContext";
+import { useVisibility } from "../context/VisibilityContext";
 
 export default function MenuAppBar() {
   const [sideBarIsOpen, setSideBarIsOpen] = useState(false);
   const [addItemIsOpen, setAddItemIsOpen] = useState(false);
 
   const { currentUser, displayName } = useAuth();
+  const { handleStoreModalIsOpen, storeModalIsOpen } = useVisibility();
   const iconName = useIconMaker(displayName);
 
   const handleSideBarMenuClick = (value) => {
@@ -32,6 +35,10 @@ export default function MenuAppBar() {
       <SideBarMenu
         isOpen={sideBarIsOpen}
         toggleDrawer={handleSideBarMenuClick}
+      />
+      <StoreModal
+        handleStoreModalIsOpen={handleStoreModalIsOpen}
+        isOpen={storeModalIsOpen}
       />
       <AddItemModal
         isOpen={addItemIsOpen}
