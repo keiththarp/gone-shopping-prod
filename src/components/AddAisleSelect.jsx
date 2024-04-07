@@ -8,31 +8,37 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 
 import { useData } from "../context/DataContext";
 
-export default function AddSectionSelect({ handleChangeSectionSelect }) {
-  const { allSections } = useData();
-  const [selectedSection, setSelectedSection] = useState("");
-  const handleClick = (sectionData) => {
-    handleChangeSectionSelect(sectionData);
+export default function AddAisleSelect({ handleChangeAisleSelect }) {
+  const { allAisles } = useData();
+  const [selectedAisle, setSelectedAisle] = useState("");
+  const handleClick = (aisleData) => {
+    handleChangeAisleSelect(aisleData);
   };
   return (
     <FormControl variant="standard" sx={{ minWidth: "255px" }}>
-      <InputLabel id="section-select-label">Section</InputLabel>
+      <InputLabel id="aisle-select-label">Aisle</InputLabel>
       <Select
-        value={selectedSection}
-        labelId="section-select-label"
-        id="section-select"
-        label="Section"
+        value={selectedAisle}
+        labelId="Aisle-select-label"
+        id="aisle-select"
+        label="Aisle"
         onChange={(e) => {
-          setSelectedSection(e.target.value);
+          setSelectedAisle(e.target.value);
         }}
       >
-        {allSections.map((section) => (
+        {allAisles.map((aisle) => (
           <MenuItem
-            key={section.id}
-            onClick={() => handleClick({ id: section.id, name: section.name })}
-            value={section.name}
+            key={aisle.id}
+            onClick={() =>
+              handleClick({
+                id: aisle.id,
+                name: aisle.name,
+                accentColor: aisle.accentColor,
+              })
+            }
+            value={aisle.name}
           >
-            {section.name}
+            {aisle.name}
           </MenuItem>
         ))}
         <MenuItem onClick={() => console.log("clicked")}>
@@ -41,7 +47,7 @@ export default function AddSectionSelect({ handleChangeSectionSelect }) {
               sx={{ fontSize: 30, paddingRight: "10px" }}
             />
           </IconButton>
-          Add New Section
+          Add New Aisle
         </MenuItem>
       </Select>
     </FormControl>

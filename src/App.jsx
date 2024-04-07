@@ -7,7 +7,9 @@ import ProtectedRoutes from "./router/ProtectedRoutes.jsx";
 
 import Header from "./components/Header.jsx";
 import AllItemsPage from "./views/AllItemsPage.jsx";
-import MainList from "./views/MainList.jsx";
+import AllStoresPage from "./views/AllStoresPage.jsx";
+import AllAislesPage from "./views/AllAislesPage.jsx";
+import MainListPage from "./views/MainList.jsx";
 import Profile from "./views/Profile.jsx";
 import SignUp from "./views/SignUp.jsx";
 import SignIn from "./views/SignIn.jsx";
@@ -22,8 +24,10 @@ function App() {
               <Header />
               <Routes>
                 <Route element={<ProtectedRoutes />}>
-                  <Route path="/" element={<MainList />} />
+                  <Route path="/" element={<MainListPage />} />
+                  <Route path="/all-stores" element={<AllStoresPage />} />
                   <Route path="/all-items" element={<AllItemsPage />} />
+                  <Route path="/all-aisles" element={<AllAislesPage />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
                 <Route path="/signup" element={<SignUp />} />

@@ -265,6 +265,9 @@ export default function SortableList() {
           <Paper sx={{ width: "100%", paddingInline: "10px" }}>
             <EnhancedTableToolbar numSelected={selected.length} />
             <TableContainer>
+              <button onClick={() => handleRequestSort(event, "section")}>
+                click
+              </button>
               <Table stickyHeader aria-labelledby="tableTitle" size={"medium"}>
                 <EnhancedTableHead
                   numSelected={selected.length}

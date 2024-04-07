@@ -13,8 +13,9 @@ export function useData() {
 
 export function DataProvider({ children }) {
   const [allItems, setAllItems] = useState([]);
+  const [mainList, setMainList] = useState([]);
   const [allStores, setAllStores] = useState([]);
-  const [allSections, setAllSections] = useState([]);
+  const [allAisles, setAllAisles] = useState([]);
 
   const getAllItems = async () => {
     const querySnapshot = await getDocs(collection(db, "items"));
@@ -25,20 +26,23 @@ export function DataProvider({ children }) {
         id: doc.id,
         name: item.name || "--",
         flavor: item.flavor,
+        mainList: item.mainList || false,
+        isChecked: item.isChecked !== undefined ? item.isChecked : false,
         isFavorite: item.isFavorite || false,
         price: item.price || "--",
         rank: item.rank || 0,
-        section: item.sectionData ? item.sectionData.name : "--",
+        aisle: item.aisleData ? item.aisleData.name : "--",
+        color: item.aisleData?.accentColor || "",
         preferredStore: item.storeData ? item.storeData.name : "--",
         notes: item.notes,
       });
     });
     setAllItems(items);
+    setMainList(items.filter((item) => item.mainList === true));
   };
 
-  const deleteItem = async (itemId) => {
-    await deleteDoc(doc(db, "items", itemId));
-    getAllItems();
+  const deleteData = async (collection, docId) => {
+    await deleteDoc(doc(db, collection, docId));
   };
 
   const getAllStores = async () => {
@@ -49,38 +53,46 @@ export function DataProvider({ children }) {
       stores.push({
         id: doc.id,
         name: store.name,
-        address: store.address,
+        isFavorite: store.isFavorite || false,
+        abbr: store.abbr,
+        city: store.city,
+        website: store.website,
         notes: store.notes,
       });
     });
     setAllStores(stores);
   };
 
-  const getAllSections = async () => {
-    const querySnapshot = await getDocs(collection(db, "sections"));
-    const sections = [];
+  const getAllAisles = async () => {
+    const querySnapshot = await getDocs(collection(db, "aisles"));
+    const aisles = [];
     querySnapshot.forEach((doc) => {
-      const section = doc.data();
-      sections.push({
+      const aisle = doc.data();
+      aisles.push({
         id: doc.id,
-        name: section.name,
+        name: aisle.name,
+        isFavorite: aisle.isFavorite || false,
+        accentColor: aisle.accentColor,
       });
     });
-    setAllSections(sections);
+    setAllAisles(aisles);
   };
 
   useEffect(() => {
     getAllItems();
     getAllStores();
-    getAllSections();
+    getAllAisles();
   }, []);
 
   const value = {
     allItems,
+    mainList,
     allStores,
-    allSections,
+    allAisles,
     getAllItems,
-    deleteItem,
+    getAllStores,
+    getAllAisles,
+    deleteData,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

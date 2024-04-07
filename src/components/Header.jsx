@@ -12,7 +12,6 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 
 import SideBarMenu from "./SideBarMenu";
 import AddItemModal from "../components/AddItemModal";
-import StoreModal from "./StoreModal";
 import useIconMaker from "../utils/useIconMaker";
 
 import { useAuth } from "../context/AuthContext";
@@ -36,16 +35,12 @@ export default function MenuAppBar() {
         isOpen={sideBarIsOpen}
         toggleDrawer={handleSideBarMenuClick}
       />
-      <StoreModal
-        handleStoreModalIsOpen={handleStoreModalIsOpen}
-        isOpen={storeModalIsOpen}
-      />
       <AddItemModal
         isOpen={addItemIsOpen}
         handleAddItemIsOpen={setAddItemIsOpen}
       />
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="fixed">
+        <AppBar position="fixed" elevation={0}>
           <Toolbar>
             {currentUser && (
               <IconButton

@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import {
   FormControl,
   Typography,
@@ -17,7 +19,7 @@ import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAuto
 import { styled } from "@mui/system";
 
 import AddStoreSelect from "./AddStoreSelect";
-import AddSectionSelect from "./AddSectionSelect";
+import AddAisleSelect from "./AddAisleSelect";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useData } from "../context/DataContext";
@@ -32,12 +34,15 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const { getAllItems } = useData();
 
+  const onMainList = useLocation().pathname === "/";
+
   const handleAddItemFormChange = () => {
     setFormData((prev) => ({
       ...prev,
       name: nameRef.current.value,
       flavor: flavorRef.current.value,
       isFavorite: isFavorite,
+      mainList: onMainList,
       price: priceRef.current.value,
       notes: notesRef.current.value,
     }));
@@ -57,10 +62,10 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
     }));
   };
 
-  const handleChangeSectionSelect = (sectionData) => {
+  const handleChangeAisleSelect = (aisleData) => {
     setFormData((prev) => ({
       ...prev,
-      sectionData,
+      aisleData,
     }));
   };
 
@@ -99,9 +104,7 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
             variant="standard"
           />
         </FormControl>
-        <AddSectionSelect
-          handleChangeSectionSelect={handleChangeSectionSelect}
-        />
+        <AddAisleSelect handleChangeAisleSelect={handleChangeAisleSelect} />
         <AddStoreSelect handleChangeStoreSelect={handleChangeStoreSelect} />
         <FormControl fullWidth sx={{ mt: 2 }} variant="standard">
           <Input

@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+import { styled } from "@mui/system";
+
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
+import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import Typography from "@mui/material/Typography";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemButton from "@mui/material/ListItemButton";
 
 import ConfirmModal from "./ConfirmModal";
+import ListMenuItem from "./ListMenuItem";
 import { useAuth } from "../context/AuthContext";
+
+const internals = {};
 
 export default function SideBarMenu({ isOpen, toggleDrawer }) {
   const [showModal, setShowModal] = useState(false);
@@ -54,39 +56,23 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
       }}
     >
       <List>
-        <Link to={"/all-items"}>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <ChecklistIcon />
-              </ListItemIcon>
-              <ListItemText>All Items</ListItemText>
-            </ListItemButton>
-          </ListItem>
-        </Link>
-        <Link to={"/"}>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <FavoriteIcon />
-              </ListItemIcon>
-              <ListItemText>sortable list</ListItemText>
-            </ListItemButton>
-          </ListItem>
-        </Link>
+        <ListMenuItem link="/" icon="cart" title="Main List" />
       </List>
+
       <Divider />
+      <ListMenuItem link="/all-items" icon="list" title="Pantry" />
+      <SectionBox>
+        <Typography>Add/Edit</Typography>
+      </SectionBox>
       <List>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <ChecklistIcon />
-            </ListItemIcon>
-            <ListItemText />
-          </ListItemButton>
-        </ListItem>
+        <ListMenuItem link="/all-stores" icon="store" title="Stores" />
       </List>
+      <List>
+        <ListMenuItem link="/all-aisles" icon="store" title="Aisles" />
+      </List>
+
       <Divider />
+
       <ListItemButton onClick={handleLogoutClick}>
         <ListItemIcon>
           <LogoutIcon />
@@ -110,3 +96,9 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
     </>
   );
 }
+
+const SectionBox = styled(Box)`
+  color: #fff;
+  text-align: center;
+  background: ${({ theme }) => theme.palette.primary.main};
+`;
