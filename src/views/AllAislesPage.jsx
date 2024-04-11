@@ -1,13 +1,10 @@
 import { useState, Fragment } from "react";
-import { Link } from "react-router-dom";
 
 import styled from "styled-components";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import RemoveCircleOutlineOutlined from "@mui/icons-material/RemoveCircleOutlineOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import SquareIcon from "@mui/icons-material/Square";
 import StarIcon from "@mui/icons-material/Star";
@@ -59,10 +56,10 @@ export default function AllAislesPage() {
     getAllAisles();
   };
 
-  // const handleEditStore = (id) => {
-  //   setStoreId(id);
-  //   setShowStoreModal(true);
-  // };
+  const handleAisleModal = (id) => {
+    setAisleId(id);
+    setShowAisleModal(true);
+  };
 
   const handleExpand = (itemId) => () => {
     setExpanded((prev) => (prev === itemId ? -1 : itemId));
@@ -81,7 +78,7 @@ export default function AllAislesPage() {
         aisleId={aisleId}
       />
       <ListHeader>
-        <IconButton onClick={() => setShowAisleModal(true)}>
+        <IconButton onClick={handleAisleModal}>
           Add Aisle
           <AddCircleOutlineOutlinedIcon sx={{ marginLeft: "10px" }} />
         </IconButton>
@@ -141,12 +138,15 @@ export default function AllAislesPage() {
                     position: "relative",
                   }}
                 >
-                  <IconButton
-                    onClick={() => handleEditStore(aisle.id)}
-                    sx={{ position: "absolute", top: "5px", right: "5px" }}
-                  >
-                    <EditIcon sx={{ color: "000", fontSize: "23px" }} />
-                  </IconButton>
+                  <Tooltip title={"edit"}>
+                    <IconButton
+                      onClick={() => handleAisleModal(aisle.id)}
+                      sx={{ position: "absolute", top: "5px", right: "5px" }}
+                    >
+                      <EditIcon sx={{ color: "000", fontSize: "23px" }} />
+                    </IconButton>
+                  </Tooltip>
+
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     Accent Color:{"  "}
                     <SquareIcon
@@ -156,6 +156,7 @@ export default function AllAislesPage() {
                       }}
                     />
                   </Box>
+                  <p>Notes: {aisle.notes}</p>
                 </Box>
               </Collapse>
             </Fragment>

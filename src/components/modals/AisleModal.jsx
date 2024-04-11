@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   FormControl,
   TextField,
@@ -9,6 +9,7 @@ import {
   Box,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
 import SquareIcon from "@mui/icons-material/Square";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -46,33 +47,56 @@ export default function AisleModal({
   const nameRef = useRef();
   const notesRef = useRef();
 
-  const [formData, setFormData] = useState({});
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [accentColor, setAccentColor] = useState("rgb(255,255,255)");
-
   const { getAllAisles, allAisles } = useData();
+  const aisleToEdit = allAisles.find((aisle) => aisle.id === aisleId);
+
+  const [formData, setFormData] = useState({});
+  const [accentColor, setAccentColor] = useState("rgb(255,255,255)");
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    if (!!aisleToEdit) {
+      setFormData((prev) => ({
+        ...prev,
+        name: aisleToEdit.name,
+        accentColor: aisleToEdit.accentColor,
+        notes: aisleToEdit.notes,
+      }));
+      setAccentColor(aisleToEdit.accentColor);
+    } else {
+      setFormData({});
+      setAccentColor("rgb(255,255,255)");
+    }
+  }, [aisleToEdit]);
 
   const handleAisleFormChange = () => {
     setFormData((prev) => ({
       ...prev,
       name: nameRef.current.value,
-      isFavorite: isFavorite,
       accentColor: accentColor,
       notes: notesRef.current.value,
     }));
   };
 
-  const aisleToEdit = allAisles.find((aisle) => aisle.id === aisleId);
-
   const handleEdit = async () => {
-    const storeRef = doc(db, "stores", storeToEdit.id);
+    const nameSpace = formData.name.trim();
+    if (!nameSpace) {
+      setShowAlert(true);
+      return;
+    }
+    const aisleRef = doc(db, "aisles", aisleToEdit.id);
 
-    await updateDoc(storeRef, formData);
+    await updateDoc(aisleRef, formData);
     handleAisleModalIsOpen(false);
     getAllAisles();
   };
 
   const handleSave = () => {
+    const nameSpace = formData.name.trim();
+    if (!nameSpace) {
+      setShowAlert(true);
+      return;
+    }
     addDoc(collection(db, "aisles"), formData);
 
     handleAisleModalIsOpen(false);
@@ -82,6 +106,16 @@ export default function AisleModal({
 
   return (
     <Dialog open={isOpen}>
+      {showAlert && (
+        <Alert
+          severity="warning"
+          onClose={() => {
+            setShowAlert(false);
+          }}
+        >
+          Name field cannot be blank.
+        </Alert>
+      )}
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
           Add an Aisle
@@ -96,23 +130,7 @@ export default function AisleModal({
             defaultValue={!!aisleToEdit ? aisleToEdit.name : ""}
           />
         </FormControl>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginTop: "12px",
-            marginLeft: "-10px",
-          }}
-        >
-          <IconButton onClick={() => setIsFavorite((prev) => !prev)}>
-            {isFavorite ? (
-              <StarIcon sx={{ color: "#ff0000" }} />
-            ) : (
-              <StarBorderIcon />
-            )}
-          </IconButton>
-          Favorite?
-        </Box>
+        <p>Choose an accent color:</p>
         <Grid container spacing={1}>
           {colors.map((color, index) => (
             <Grid item xs={3} key={index}>
@@ -154,16 +172,27 @@ export default function AisleModal({
           }}
         >
           {aisleToEdit ? (
-            <Button onClick={handleEdit} variant="contained">
+            <Button
+              disabled={!formData.name}
+              onClick={handleEdit}
+              variant="contained"
+            >
               SAVE
             </Button>
           ) : (
-            <Button onClick={handleSave} variant="contained">
+            <Button
+              disabled={!formData.name}
+              onClick={handleSave}
+              variant="contained"
+            >
               SAVE
             </Button>
           )}
           <Button
-            onClick={() => handleAisleModalIsOpen(false)}
+            onClick={() => {
+              setShowAlert(false);
+              handleAisleModalIsOpen(false);
+            }}
             variant="contained"
           >
             CANCEL

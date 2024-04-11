@@ -7,13 +7,14 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import RemoveCircleOutlineOutlined from "@mui/icons-material/RemoveCircleOutlineOutlined";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import CommentIcon from "@mui/icons-material/Comment";
+import Tooltip from "@mui/material/Tooltip";
 import { Collapse } from "@mui/material";
 import Box from "@mui/material/Box";
 
@@ -56,7 +57,7 @@ export default function AllStoresPage() {
     getAllStores();
   };
 
-  const handleEditStore = (id) => {
+  const handleStoreModal = (id) => {
     setStoreId(id);
     setShowStoreModal(true);
   };
@@ -78,7 +79,7 @@ export default function AllStoresPage() {
         storeId={storeId}
       />
       <ListHeader>
-        <IconButton onClick={() => setShowStoreModal(true)}>
+        <IconButton onClick={handleStoreModal}>
           Add Store
           <AddCircleOutlineOutlinedIcon sx={{ marginLeft: "10px" }} />
         </IconButton>
@@ -95,15 +96,22 @@ export default function AllStoresPage() {
                 disablePadding
                 sx={{ borderTop: "1px solid #c4c4c4" }}
               >
+                <Tooltip title={"delete"}>
+                  <DeleteIcon
+                    onClick={() => {
+                      setDeleteItemId(store.id);
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    <HighlightOffIcon />
+                  </DeleteIcon>
+                </Tooltip>
                 <ListItemButton
                   role={undefined}
                   aria-label="comments"
                   onClick={handleExpand(store.id)}
                   dense={true}
                 >
-                  <ListItemIcon>
-                    <CommentIcon />
-                  </ListItemIcon>
                   <ListItemText id={labelId} primary={store.name} />
                 </ListItemButton>
                 <IconButton
@@ -117,14 +125,9 @@ export default function AllStoresPage() {
                     <StarBorderIcon />
                   )}
                 </IconButton>
-                <DeleteIcon
-                  onClick={() => {
-                    setDeleteItemId(store.id);
-                    setShowDeleteModal(true);
-                  }}
-                >
-                  <RemoveCircleOutlineOutlined />
-                </DeleteIcon>
+                <IconButton onClick={handleExpand(store.id)}>
+                  <CommentIcon />
+                </IconButton>
               </ListItem>
               <Collapse in={expanded === store.id} timeout="auto" unmountOnExit>
                 <Box
@@ -137,7 +140,7 @@ export default function AllStoresPage() {
                   }}
                 >
                   <IconButton
-                    onClick={() => handleEditStore(store.id)}
+                    onClick={() => handleStoreModal(store.id)}
                     sx={{ position: "absolute", top: "5px", right: "5px" }}
                   >
                     <EditIcon sx={{ color: "000", fontSize: "23px" }} />

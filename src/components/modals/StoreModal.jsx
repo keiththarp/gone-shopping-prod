@@ -1,11 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   FormControl,
-  Typography,
   TextField,
-  IconButton,
-  InputAdornment,
-  Input,
   Button,
   DialogTitle,
   Dialog,
@@ -13,7 +9,7 @@ import {
 } from "@mui/material";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
-
+import Alert from "@mui/material/Alert";
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useData } from "../../context/DataContext";
@@ -42,9 +38,27 @@ export default function StoreModal({
   const webRef = useRef();
   const abbrRef = useRef();
 
+  const { getAllStores, allStores } = useData();
+  const storeToEdit = allStores.find((store) => store.id === storeId);
+
   const [abbrValue, setAbbrValue] = useState("");
   const [formData, setFormData] = useState({});
-  const { getAllStores, allStores } = useData();
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    if (!!storeToEdit) {
+      setFormData((prev) => ({
+        ...prev,
+        name: storeToEdit.name,
+        abbr: storeToEdit.abbr,
+        website: storeToEdit.website,
+        city: storeToEdit.city,
+        notes: storeToEdit.notes,
+      }));
+    } else {
+      setFormData({});
+    }
+  }, [storeToEdit]);
 
   const handleStoreFormChange = () => {
     if (!storeId) {
@@ -66,9 +80,12 @@ export default function StoreModal({
     }
   };
 
-  const storeToEdit = allStores.find((store) => store.id === storeId);
-
   const handleEdit = async () => {
+    const nameSpace = formData.name.trim();
+    if (!nameSpace) {
+      setShowAlert(true);
+      return;
+    }
     const storeRef = doc(db, "stores", storeToEdit.id);
 
     await updateDoc(storeRef, formData);
@@ -77,6 +94,11 @@ export default function StoreModal({
   };
 
   const handleSave = () => {
+    const nameSpace = formData.name.trim();
+    if (!nameSpace) {
+      setShowAlert(true);
+      return;
+    }
     addDoc(collection(db, "stores"), formData);
 
     handleStoreModalIsOpen(false);
@@ -85,8 +107,24 @@ export default function StoreModal({
     getAllStores();
   };
 
+  const handleCancel = () => {
+    setShowAlert(false);
+    handleStoreModalIsOpen(false);
+    setFormData({});
+  };
+
   return (
     <Dialog open={isOpen}>
+      {showAlert && (
+        <Alert
+          severity="warning"
+          onClose={() => {
+            setShowAlert(false);
+          }}
+        >
+          Name field cannot be blank.
+        </Alert>
+      )}
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
           Add a Store
@@ -162,18 +200,23 @@ export default function StoreModal({
           }}
         >
           {storeToEdit ? (
-            <Button onClick={handleEdit} variant="contained">
+            <Button
+              disabled={!formData.name}
+              onClick={handleEdit}
+              variant="contained"
+            >
               SAVE
             </Button>
           ) : (
-            <Button onClick={handleSave} variant="contained">
+            <Button
+              disabled={!formData.name}
+              onClick={handleSave}
+              variant="contained"
+            >
               SAVE
             </Button>
           )}
-          <Button
-            onClick={() => handleStoreModalIsOpen(false)}
-            variant="contained"
-          >
+          <Button onClick={handleCancel} variant="contained">
             CANCEL
           </Button>
         </Box>

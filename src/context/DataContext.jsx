@@ -73,6 +73,7 @@ export function DataProvider({ children }) {
         name: aisle.name,
         isFavorite: aisle.isFavorite || false,
         accentColor: aisle.accentColor,
+        notes: aisle.notes,
       });
     });
     setAllAisles(aisles);
