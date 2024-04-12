@@ -8,7 +8,7 @@ const sortHeaders = [
   },
   {
     display: "Aisle",
-    criteria: "aisle",
+    criteria: "aisleName",
   },
   {
     display: "Store",

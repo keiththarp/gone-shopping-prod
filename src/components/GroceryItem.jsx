@@ -24,12 +24,11 @@ export default function GroceryItem({
   handleUpdateItem,
   handleExpand,
   expanded,
-  color,
 }) {
   const { ItemContainer } = internals;
 
   return (
-    <ItemContainer color={color}>
+    <ItemContainer color={item.aisleAccentColor}>
       <ListItem
         key={item.name}
         disablePadding
@@ -90,7 +89,7 @@ export default function GroceryItem({
         >
           <p>Rank: {item.rank}</p>
           <p>Preferred Store: {item.preferredStore || "--"}</p>
-          <p>Section: {item.section || "--"}</p>
+          <p>Aisle: {item.aisleName || "--"}</p>
           <p>Price: {item.price || "--"}</p>
           <p>Notes: {item.notes || "--"}</p>
         </Box>

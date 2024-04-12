@@ -241,7 +241,7 @@ export default function AllItemsPage() {
                     }}
                   >
                     <p>Preferred Store: {item.preferredStore || "--"}</p>
-                    <p>Section: {item.section || "--"}</p>
+                    <p>Aisle: {item.aisleName || "--"}</p>
                     <p>Price: {item.price || "--"}</p>
                     <p>Notes: {item.notes || "--"}</p>
                   </Box>

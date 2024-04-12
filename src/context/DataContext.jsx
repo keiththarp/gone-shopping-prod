@@ -1,7 +1,16 @@
 import { useContext, useState, useEffect, createContext } from "react";
 // import { useNavigate } from "react-router-dom";
 
-import { doc, collection, getDocs, deleteDoc } from "firebase/firestore";
+// import { doc, collection, getDocs, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  writeBatch,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 import { db } from "../firebase";
 
@@ -31,9 +40,9 @@ export function DataProvider({ children }) {
         isFavorite: item.isFavorite || false,
         price: item.price || "--",
         rank: item.rank || 0,
-        aisle: item.aisleData ? item.aisleData.name : "--",
-        color: item.aisleData?.accentColor || "",
-        preferredStore: item.storeData ? item.storeData.name : "--",
+        aisleName: item.aisleName || "--",
+        aisleAccentColor: item.aisleAccentColor || "",
+        preferredStore: item.preferredStoreName || "--",
         notes: item.notes,
       });
     });
@@ -79,6 +88,31 @@ export function DataProvider({ children }) {
     setAllAisles(aisles);
   };
 
+  const updateRelatedItems = async (
+    collectionKey,
+    relatedId,
+    itemUpdateData
+  ) => {
+    const q = query(
+      collection(db, "items"),
+      where(collectionKey, "==", relatedId)
+    );
+
+    console.log(relatedId);
+    const querySnapshot = await getDocs(q);
+
+    const batch = writeBatch(db);
+
+    querySnapshot.forEach((item) => {
+      const itemRef = doc(db, "items", item.id);
+      console.log(item.id);
+      batch.update(itemRef, itemUpdateData);
+    });
+
+    await batch.commit();
+    getAllItems();
+  };
+
   useEffect(() => {
     getAllItems();
     getAllStores();
@@ -94,6 +128,7 @@ export function DataProvider({ children }) {
     getAllStores,
     getAllAisles,
     deleteData,
+    updateRelatedItems,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

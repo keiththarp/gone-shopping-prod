@@ -3,14 +3,13 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { InputLabel } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 
 import { useData } from "../context/DataContext";
 
 export default function AddAisleSelect({ handleChangeAisleSelect }) {
   const { allAisles } = useData();
   const [selectedAisle, setSelectedAisle] = useState("");
+
   const handleClick = (aisleData) => {
     handleChangeAisleSelect(aisleData);
   };
@@ -26,6 +25,12 @@ export default function AddAisleSelect({ handleChangeAisleSelect }) {
           setSelectedAisle(e.target.value);
         }}
       >
+        <MenuItem value="none" onClick={handleClick}>
+          None
+        </MenuItem>
+        {allAisles.length <= 0 && (
+          <MenuItem disabled>Add aisles on aisles page</MenuItem>
+        )}
         {allAisles.map((aisle) => (
           <MenuItem
             key={aisle.id}
@@ -41,14 +46,6 @@ export default function AddAisleSelect({ handleChangeAisleSelect }) {
             {aisle.name}
           </MenuItem>
         ))}
-        <MenuItem onClick={() => console.log("clicked")}>
-          <IconButton>
-            <AddCircleOutlineOutlinedIcon
-              sx={{ fontSize: 30, paddingRight: "10px" }}
-            />
-          </IconButton>
-          Add New Aisle
-        </MenuItem>
       </Select>
     </FormControl>
   );

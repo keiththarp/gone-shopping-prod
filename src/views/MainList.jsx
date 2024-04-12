@@ -164,7 +164,6 @@ export default function MainListPage() {
                     handleExpand={handleExpand}
                     setDeleteItemId={setDeleteItemId}
                     setShowDeleteModal={setShowDeleteModal}
-                    color={item.color}
                   />
                 );
               })}

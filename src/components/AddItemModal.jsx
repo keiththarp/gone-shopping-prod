@@ -12,6 +12,8 @@ import {
   DialogTitle,
   Dialog,
   Box,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -23,6 +25,7 @@ import AddAisleSelect from "./AddAisleSelect";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useData } from "../context/DataContext";
+import { Check } from "@mui/icons-material";
 
 export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
   const nameRef = useRef();
@@ -32,9 +35,9 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
 
   const [formData, setFormData] = useState({ key: "value" });
   const [isFavorite, setIsFavorite] = useState(false);
-  const { getAllItems } = useData();
+  const [checked, setChecked] = useState(true);
 
-  const onMainList = useLocation().pathname === "/";
+  const { getAllItems } = useData();
 
   const handleAddItemFormChange = () => {
     setFormData((prev) => ({
@@ -42,30 +45,42 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
       name: nameRef.current.value,
       flavor: flavorRef.current.value,
       isFavorite: isFavorite,
-      mainList: onMainList,
+      mainList: checked,
       price: priceRef.current.value,
       notes: notesRef.current.value,
     }));
   };
 
-  const handleSave = () => {
-    addDoc(collection(db, "items"), formData);
+  const handleCheckChange = (event) => {
+    setChecked(event.target.checked);
+    handleAddItemFormChange();
+  };
+
+  const handleSave = async () => {
+    await addDoc(collection(db, "items"), formData);
 
     handleAddItemIsOpen(false);
     getAllItems();
+    setChecked(true);
   };
 
   const handleChangeStoreSelect = (storeData) => {
     setFormData((prev) => ({
       ...prev,
-      storeData,
+      preferredStoreID: storeData.id,
+      preferredStoreName: storeData.name,
     }));
   };
 
   const handleChangeAisleSelect = (aisleData) => {
+    if (!aisleData) {
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
-      aisleData,
+      aisleName: aisleData.name,
+      aisleAccentColor: aisleData.accentColor,
+      aisleId: aisleData.id,
     }));
   };
 
@@ -75,6 +90,10 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
           Add an Item
         </DialogTitle>
+        <FormControlLabel
+          control={<Checkbox checked={checked} onChange={handleCheckChange} />}
+          label="Include in Main List"
+        />
         <FormControl size="small" sx={{ minWidth: "255px" }}>
           <TextField
             onChange={handleAddItemFormChange}

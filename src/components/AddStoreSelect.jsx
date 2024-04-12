@@ -28,26 +28,22 @@ export default function AddStoreSelect({ handleChangeStoreSelect }) {
           setSelectedStore(e.target.value);
         }}
       >
-        {allStores.map((store) => (
-          <MenuItem
-            key={store.id}
-            onClick={() => handleClick({ id: store.id, name: store.name })}
-            value={store.name}
-          >
-            {store.name}
-          </MenuItem>
-        ))}
-        <MenuItem
-          value="Add Store"
-          onClick={() => handleStoreModalIsOpen(true)}
-        >
-          <IconButton>
-            <AddCircleOutlineOutlinedIcon
-              sx={{ fontSize: 30, paddingRight: "10px" }}
-            />
-          </IconButton>
-          Add New Store
+        <MenuItem value="none" onClick={handleClick}>
+          None
         </MenuItem>
+        {allStores.length <= 0 && (
+          <MenuItem disabled>Add aisles on aisles page</MenuItem>
+        )}
+        {allStores.length > 0 &&
+          allStores.map((store) => (
+            <MenuItem
+              key={store.id}
+              onClick={() => handleClick({ id: store.id, name: store.name })}
+              value={store.name}
+            >
+              {store.name}
+            </MenuItem>
+          ))}
       </Select>
     </FormControl>
   );

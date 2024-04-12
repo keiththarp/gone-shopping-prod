@@ -11,8 +11,6 @@ import {
 import Grid from "@mui/material/Grid";
 import Alert from "@mui/material/Alert";
 import SquareIcon from "@mui/icons-material/Square";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 
@@ -47,7 +45,7 @@ export default function AisleModal({
   const nameRef = useRef();
   const notesRef = useRef();
 
-  const { getAllAisles, allAisles } = useData();
+  const { getAllAisles, allAisles, updateRelatedItems } = useData();
   const aisleToEdit = allAisles.find((aisle) => aisle.id === aisleId);
 
   const [formData, setFormData] = useState({});
@@ -78,6 +76,14 @@ export default function AisleModal({
     }));
   };
 
+  const handleAccentColor = (color) => {
+    setAccentColor(color);
+    setFormData((prev) => ({
+      ...prev,
+      accentColor: color,
+    }));
+  };
+
   const handleEdit = async () => {
     const nameSpace = formData.name.trim();
     if (!nameSpace) {
@@ -87,6 +93,11 @@ export default function AisleModal({
     const aisleRef = doc(db, "aisles", aisleToEdit.id);
 
     await updateDoc(aisleRef, formData);
+    const itemUpdateData = {
+      aisleName: formData.name,
+      aisleAccentColor: formData.accentColor,
+    };
+    await updateRelatedItems("aisleId", aisleToEdit.id, itemUpdateData);
     handleAisleModalIsOpen(false);
     getAllAisles();
   };
@@ -135,7 +146,7 @@ export default function AisleModal({
           {colors.map((color, index) => (
             <Grid item xs={3} key={index}>
               <SquareIcon
-                onClick={() => setAccentColor(color)}
+                onClick={() => handleAccentColor(color)}
                 sx={{
                   color:
                     color === accentColor
