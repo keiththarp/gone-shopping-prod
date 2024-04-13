@@ -19,10 +19,15 @@ import { useVisibility } from "../context/VisibilityContext";
 
 export default function MenuAppBar() {
   const [sideBarIsOpen, setSideBarIsOpen] = useState(false);
-  const [addItemIsOpen, setAddItemIsOpen] = useState(false);
 
   const { currentUser, displayName } = useAuth();
-  const { handleStoreModalIsOpen, storeModalIsOpen } = useVisibility();
+  const {
+    handleStoreModalIsOpen,
+    storeModalIsOpen,
+    showItemModal,
+    itemToEditId,
+    handleAddItemModal,
+  } = useVisibility();
   const iconName = useIconMaker(displayName);
 
   const handleSideBarMenuClick = (value) => {
@@ -36,8 +41,9 @@ export default function MenuAppBar() {
         toggleDrawer={handleSideBarMenuClick}
       />
       <AddItemModal
-        isOpen={addItemIsOpen}
-        handleAddItemIsOpen={setAddItemIsOpen}
+        isOpen={showItemModal}
+        handleAddItemIsOpen={handleAddItemModal}
+        itemId={itemToEditId}
       />
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" elevation={0}>
@@ -63,7 +69,7 @@ export default function MenuAppBar() {
             >
               Gone Shopping
             </Typography>
-            <IconButton onClick={() => setAddItemIsOpen(true)}>
+            <IconButton onClick={() => handleAddItemModal(true)}>
               <AddCircleOutlineOutlinedIcon
                 sx={{ fontSize: 50, paddingRight: "10px", color: "#FFF" }}
               />

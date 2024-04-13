@@ -127,7 +127,7 @@ export default function StoreModal({
       )}
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
-          Add a Store
+          {storeToEdit ? "Edit Store" : "Add a Store"}
         </DialogTitle>
         <FormControl size="small" sx={{ minWidth: "255px" }}>
           <TextField

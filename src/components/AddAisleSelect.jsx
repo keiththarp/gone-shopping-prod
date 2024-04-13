@@ -6,9 +6,12 @@ import FormControl from "@mui/material/FormControl";
 
 import { useData } from "../context/DataContext";
 
-export default function AddAisleSelect({ handleChangeAisleSelect }) {
+export default function AddAisleSelect({
+  handleChangeAisleSelect,
+  existingValue,
+}) {
   const { allAisles } = useData();
-  const [selectedAisle, setSelectedAisle] = useState("");
+  const [selectedAisle, setSelectedAisle] = useState(existingValue);
 
   const handleClick = (aisleData) => {
     handleChangeAisleSelect(aisleData);

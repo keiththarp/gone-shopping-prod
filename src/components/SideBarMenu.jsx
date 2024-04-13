@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { styled } from "@mui/system";
 
@@ -8,6 +9,7 @@ import List from "@mui/material/List";
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import StoreIcon from "@mui/icons-material/Store";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -16,10 +18,13 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ConfirmModal from "./ConfirmModal";
 import ListMenuItem from "./ListMenuItem";
 import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
 
 const internals = {};
 
 export default function SideBarMenu({ isOpen, toggleDrawer }) {
+  const { allStores } = useData();
+
   const [showModal, setShowModal] = useState(false);
   const { currentUser, logout } = useAuth();
 
@@ -57,6 +62,32 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
     >
       <List>
         <ListMenuItem link="/" icon="cart" title="Main List" />
+      </List>
+      <Divider />
+      <Box
+        sx={{
+          marginLeft: "55px",
+          marginTop: "15px",
+          marginBottom: "-5px",
+        }}
+      >
+        <Typography>Lists By Store</Typography>
+      </Box>
+      <List dense>
+        {allStores.map((store) => {
+          return (
+            <ListItemButton
+              key={store.id}
+              component={Link}
+              to={`/store-list?store=${store.id}`}
+            >
+              <ListItemIcon>
+                <StoreIcon />
+              </ListItemIcon>
+              <ListItemText>{store.name}</ListItemText>
+            </ListItemButton>
+          );
+        })}
       </List>
 
       <Divider />

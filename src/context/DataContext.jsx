@@ -42,7 +42,7 @@ export function DataProvider({ children }) {
         rank: item.rank || 0,
         aisleName: item.aisleName || "--",
         aisleAccentColor: item.aisleAccentColor || "",
-        preferredStore: item.preferredStoreName || "--",
+        preferredStoreName: item.preferredStoreName || "--",
         notes: item.notes,
       });
     });

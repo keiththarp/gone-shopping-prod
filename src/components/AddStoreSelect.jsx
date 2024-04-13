@@ -3,16 +3,15 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { InputLabel } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 
 import { useData } from "../context/DataContext";
-import { useVisibility } from "../context/VisibilityContext";
 
-export default function AddStoreSelect({ handleChangeStoreSelect }) {
+export default function AddStoreSelect({
+  handleChangeStoreSelect,
+  existingValue,
+}) {
   const { allStores } = useData();
-  const { handleStoreModalIsOpen } = useVisibility();
-  const [selectedStore, setSelectedStore] = useState("");
+  const [selectedStore, setSelectedStore] = useState(existingValue);
   const handleClick = (storeData) => {
     handleChangeStoreSelect(storeData);
   };
@@ -32,7 +31,7 @@ export default function AddStoreSelect({ handleChangeStoreSelect }) {
           None
         </MenuItem>
         {allStores.length <= 0 && (
-          <MenuItem disabled>Add aisles on aisles page</MenuItem>
+          <MenuItem disabled>Add Stores on Stores page</MenuItem>
         )}
         {allStores.length > 0 &&
           allStores.map((store) => (

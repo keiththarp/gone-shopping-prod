@@ -198,7 +198,7 @@ export default function SortableList() {
         name: item.name,
         rank: item.rank,
         favorite: item.isFavorite,
-        store: item.preferredStore,
+        store: item.preferredStoreName,
         section: item.section,
       });
     });

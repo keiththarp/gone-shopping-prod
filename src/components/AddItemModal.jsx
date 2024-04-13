@@ -1,11 +1,8 @@
-import { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
 
 import {
   FormControl,
-  Typography,
   TextField,
-  IconButton,
   InputAdornment,
   Input,
   Button,
@@ -15,36 +12,48 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
+import Alert from "@mui/material/Alert";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 
 import AddStoreSelect from "./AddStoreSelect";
 import AddAisleSelect from "./AddAisleSelect";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useData } from "../context/DataContext";
-import { Check } from "@mui/icons-material";
 
-export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
+export default function AddItemModal({ isOpen, handleAddItemIsOpen, itemId }) {
   const nameRef = useRef();
   const priceRef = useRef();
   const notesRef = useRef();
   const flavorRef = useRef();
 
-  const [formData, setFormData] = useState({ key: "value" });
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [formData, setFormData] = useState({});
   const [checked, setChecked] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const { getAllItems } = useData();
+  const { getAllItems, allItems } = useData();
+  const itemToEdit = allItems.find((item) => item.id === itemId);
+  useEffect(() => {
+    if (!!itemToEdit) {
+      setFormData((prev) => ({
+        ...prev,
+        name: itemToEdit.name,
+        flavor: itemToEdit.flavor,
+        mainList: itemToEdit.mainList,
+        price: itemToEdit.price,
+        notes: itemToEdit.notes,
+      }));
+    } else {
+      setFormData({});
+    }
+  }, [itemToEdit]);
 
   const handleAddItemFormChange = () => {
     setFormData((prev) => ({
       ...prev,
       name: nameRef.current.value,
       flavor: flavorRef.current.value,
-      isFavorite: isFavorite,
       mainList: checked,
       price: priceRef.current.value,
       notes: notesRef.current.value,
@@ -56,7 +65,33 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
     handleAddItemFormChange();
   };
 
+  const handleEdit = async () => {
+    const nameSpace = formData.name.trim();
+    if (!nameSpace) {
+      setShowAlert(true);
+      setFormData((prev) => ({
+        ...prev,
+        name: "",
+      }));
+      return;
+    }
+    const itemRef = doc(db, "items", itemToEdit.id);
+
+    await updateDoc(itemRef, formData);
+    handleAddItemIsOpen(false);
+    getAllItems();
+  };
+
   const handleSave = async () => {
+    const nameSpace = formData.name.trim();
+    if (!nameSpace) {
+      setShowAlert(true);
+      setFormData((prev) => ({
+        ...prev,
+        name: "",
+      }));
+      return;
+    }
     await addDoc(collection(db, "items"), formData);
 
     handleAddItemIsOpen(false);
@@ -84,8 +119,24 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
     }));
   };
 
+  const handleCancel = () => {
+    setShowAlert(false);
+    handleAddItemIsOpen(false);
+    setFormData({});
+  };
+
   return (
     <Dialog open={isOpen}>
+      {showAlert && (
+        <Alert
+          severity="warning"
+          onClose={() => {
+            setShowAlert(false);
+          }}
+        >
+          Name field cannot be blank.
+        </Alert>
+      )}
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
           Add an Item
@@ -101,18 +152,9 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
             id="outlined-basic"
             label="Name"
             variant="standard"
+            defaultValue={!!itemToEdit ? itemToEdit.name : ""}
           />
         </FormControl>
-        <FavoriteBox onClick={() => setIsFavorite((prev) => !prev)}>
-          <IconButton>
-            {isFavorite ? (
-              <StarIcon sx={{ color: "#ff0000" }} />
-            ) : (
-              <StarBorderIcon />
-            )}
-          </IconButton>
-          <Typography> Mark as Favorite! </Typography>
-        </FavoriteBox>
 
         <FormControl size="small" sx={{ minWidth: "255px" }}>
           <TextField
@@ -121,16 +163,24 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
             id="outlined-basic"
             label="Type/Flavor"
             variant="standard"
+            defaultValue={!!itemToEdit ? itemToEdit.flavor : ""}
           />
         </FormControl>
-        <AddAisleSelect handleChangeAisleSelect={handleChangeAisleSelect} />
-        <AddStoreSelect handleChangeStoreSelect={handleChangeStoreSelect} />
+        <AddAisleSelect
+          existingValue={!!itemToEdit ? itemToEdit.aisleName : ""}
+          handleChangeAisleSelect={handleChangeAisleSelect}
+        />
+        <AddStoreSelect
+          existingValue={!!itemToEdit ? itemToEdit.preferredStoreName : ""}
+          handleChangeStoreSelect={handleChangeStoreSelect}
+        />
         <FormControl fullWidth sx={{ mt: 2 }} variant="standard">
           <Input
             onChange={handleAddItemFormChange}
             inputRef={priceRef}
             id="standard-adornment-amount"
             placeholder="Current Price"
+            defaultValue={!!itemToEdit ? itemToEdit.price : ""}
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
         </FormControl>
@@ -140,6 +190,7 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
             ref={notesRef}
             aria-label="empty textarea"
             placeholder="Notes"
+            defaultValue={!!itemToEdit ? itemToEdit.notes : ""}
             minRows={3}
           />
         </FormControl>
@@ -151,13 +202,14 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen }) {
             justifyContent: "space-around",
           }}
         >
-          <Button onClick={handleSave} variant="contained">
-            SAVE
-          </Button>
           <Button
-            onClick={() => handleAddItemIsOpen(false)}
+            disabled={!formData.name}
+            onClick={itemToEdit ? handleEdit : handleSave}
             variant="contained"
           >
+            SAVE
+          </Button>
+          <Button onClick={handleCancel} variant="contained">
             CANCEL
           </Button>
         </Box>

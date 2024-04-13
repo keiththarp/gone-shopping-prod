@@ -12,7 +12,7 @@ const sortHeaders = [
   },
   {
     display: "Store",
-    criteria: "preferredStore",
+    criteria: "preferredStoreName",
   },
   {
     display: "Rank",

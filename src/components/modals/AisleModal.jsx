@@ -129,7 +129,7 @@ export default function AisleModal({
       )}
       <Box sx={{ padding: "50px", border: "1px solid blue" }}>
         <DialogTitle sx={{ paddingBottom: "10px", textAlign: "center" }}>
-          Add an Aisle
+          {aisleToEdit ? "Edit Aisle" : "Add an Aisle"}
         </DialogTitle>
         <FormControl size="small" sx={{ minWidth: "255px" }}>
           <TextField
