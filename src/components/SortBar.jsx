@@ -50,10 +50,10 @@ export default function SortBar({ list, results, title }) {
     results(listSorter(currentCriteria, ascendingOrder, list));
   }, [currentCriteria, ascendingOrder, list]);
 
-  const { SortMenu, ListHeader } = internals;
+  const { SortBarBox, ListHeader, SortMenu } = internals;
 
   return (
-    <>
+    <SortBarBox>
       <ListHeader>
         <Typography variant="h5">{title}</Typography>
         <Button onClick={() => setShowSortDrawer((prev) => !prev)}>
@@ -83,9 +83,14 @@ export default function SortBar({ list, results, title }) {
           </List>
         </SortMenu>
       </Collapse>
-    </>
+    </SortBarBox>
   );
 }
+
+internals.SortBarBox = styled(Box)`
+  border-block: 1px solid #000;
+  margin-top: 5px;
+`;
 
 internals.SortMenu = styled(Box)`
   display: flex;

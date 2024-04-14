@@ -79,7 +79,7 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
             <ListItemButton
               key={store.id}
               component={Link}
-              to={`/store-list?store=${store.id}`}
+              to={`/store-list?store=${store.id}&storeName=${store.name}`}
             >
               <ListItemIcon>
                 <StoreIcon />

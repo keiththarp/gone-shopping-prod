@@ -16,12 +16,11 @@ export default function StoreList() {
   const [storeItems, setStoreItems] = useState(allItems);
   const [sortedList, setSortedList] = useState(allItems);
 
+  const params = new URLSearchParams(location.search);
+  const storeName = params.get("storeName");
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const storeParam = params.get("store");
-    setStoreItems(
-      allItems.filter((item) => item.preferredStoreId === storeParam)
-    );
+    const storeId = params.get("store");
+    setStoreItems(allItems.filter((item) => item.preferredStoreId === storeId));
   }, [allItems, location]);
 
   const handleSortBarResults = (list) => {
@@ -33,7 +32,7 @@ export default function StoreList() {
       <SortBar
         list={storeItems}
         results={handleSortBarResults}
-        title={"store"}
+        title={storeName}
       />
       <Box>
         <List sx={{ width: "100%", bgcolor: "background.paper" }}>

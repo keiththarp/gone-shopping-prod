@@ -14,19 +14,6 @@ import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useData } from "../../context/DataContext";
 
-const abbrMaker = (input) => {
-  const words = input.trim().split(" ");
-  if (words.length === 1) {
-    return words[0].slice(0, 3).toUpperCase();
-  } else {
-    return words
-      .slice(0, 3)
-      .map((word) => word[0])
-      .join("")
-      .toUpperCase();
-  }
-};
-
 export default function StoreModal({
   isOpen,
   handleStoreModalIsOpen,
@@ -36,12 +23,10 @@ export default function StoreModal({
   const notesRef = useRef();
   const cityRef = useRef();
   const webRef = useRef();
-  const abbrRef = useRef();
 
   const { getAllStores, allStores } = useData();
   const storeToEdit = allStores.find((store) => store.id === storeId);
 
-  const [abbrValue, setAbbrValue] = useState("");
   const [formData, setFormData] = useState({});
   const [showAlert, setShowAlert] = useState(false);
 
@@ -50,7 +35,6 @@ export default function StoreModal({
       setFormData((prev) => ({
         ...prev,
         name: storeToEdit.name,
-        abbr: storeToEdit.abbr,
         website: storeToEdit.website,
         city: storeToEdit.city,
         notes: storeToEdit.notes,
@@ -61,23 +45,13 @@ export default function StoreModal({
   }, [storeToEdit]);
 
   const handleStoreFormChange = () => {
-    if (!storeId) {
-      setAbbrValue(abbrMaker(nameRef.current.value));
-    }
     setFormData((prev) => ({
       ...prev,
       name: nameRef.current.value,
-      abbr: abbrValue,
       website: webRef.current.value,
       city: cityRef.current.value,
       notes: notesRef.current.value,
     }));
-    if (!!storeId) {
-      setFormData((prev) => ({
-        ...prev,
-        abbr: abbrRef.current.value.toUpperCase(),
-      }));
-    }
   };
 
   const handleEdit = async () => {
@@ -103,7 +77,6 @@ export default function StoreModal({
 
     handleStoreModalIsOpen(false);
     setFormData({});
-    setAbbrValue("");
     getAllStores();
   };
 
@@ -137,25 +110,6 @@ export default function StoreModal({
             label="Name"
             variant="standard"
             defaultValue={!!storeToEdit ? storeToEdit.name : ""}
-          />
-        </FormControl>
-
-        <FormControl size="small" sx={{ minWidth: "255px" }}>
-          <TextField
-            id="abbr-input"
-            onChange={storeId ? handleStoreFormChange : null}
-            inputRef={abbrRef}
-            variant="standard"
-            InputProps={
-              !storeToEdit
-                ? {
-                    readOnly: true,
-                  }
-                : null
-            }
-            label="Abbreviation"
-            placeholder="Abbreviation"
-            defaultValue={!!storeToEdit ? storeToEdit.abbr : abbrValue}
           />
         </FormControl>
 
