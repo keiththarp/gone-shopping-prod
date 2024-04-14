@@ -1,4 +1,4 @@
-const useIconMaker = (name) => {
+const iconMaker = (name) => {
   function stringToColor(string) {
     let hash = 0;
     let i;
@@ -27,4 +27,4 @@ const useIconMaker = (name) => {
   };
 };
 
-export default useIconMaker;
+export default iconMaker;

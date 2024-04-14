@@ -1,5 +1,19 @@
+import { useState, useEffect } from "react";
+
+import {
+  Collapse,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  Typography,
+  Button,
+} from "@mui/material";
 import styled from "styled-components";
-import { Collapse, Box, List, ListItem, ListItemButton } from "@mui/material";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
+
+import useAscendingOrder from "../hooks/useAscendingOrder";
+import listSorter from "../utils/listSorter";
 
 const sortHeaders = [
   {
@@ -26,36 +40,63 @@ const sortHeaders = [
 
 const internals = {};
 
-export default function SortBar({ isOpen, sort }) {
-  const { SortMenu } = internals;
+export default function SortBar({ list, results, title }) {
+  const [showSortDrawer, setShowSortDrawer] = useState(false);
+
+  const [ascendingOrder, currentCriteria, sendCriteria] =
+    useAscendingOrder("name");
+
+  useEffect(() => {
+    results(listSorter(currentCriteria, ascendingOrder, list));
+  }, [currentCriteria, ascendingOrder, list]);
+
+  const { SortMenu, ListHeader } = internals;
 
   return (
-    <Collapse in={isOpen}>
-      <SortMenu>
-        <List>
-          {sortHeaders.map((header) => {
-            return (
-              <ListItem
-                key={header.display}
-                disablePadding
-                disableGutters
-                sx={{ display: "inline" }}
-              >
-                <ListItemButton
+    <>
+      <ListHeader>
+        <Typography variant="h5">{title}</Typography>
+        <Button onClick={() => setShowSortDrawer((prev) => !prev)}>
+          Sort <SwapVertIcon />
+        </Button>
+      </ListHeader>
+      <Collapse in={showSortDrawer}>
+        <SortMenu>
+          <List>
+            {sortHeaders.map((header) => {
+              return (
+                <ListItem
+                  key={header.display}
+                  disablePadding
+                  disableGutters
                   sx={{ display: "inline" }}
-                  onClick={() => sort(header.criteria)}
                 >
-                  {header.display}
-                </ListItemButton>{" "}
-              </ListItem>
-            );
-          })}
-        </List>
-      </SortMenu>
-    </Collapse>
+                  <ListItemButton
+                    sx={{ display: "inline" }}
+                    onClick={() => sendCriteria(header.criteria)}
+                  >
+                    {header.display}
+                  </ListItemButton>{" "}
+                </ListItem>
+              );
+            })}
+          </List>
+        </SortMenu>
+      </Collapse>
+    </>
   );
 }
 
 internals.SortMenu = styled(Box)`
   display: flex;
+`;
+
+internals.ListHeader = styled(Box)`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 8px;
+  padding: 10px 8px 0 15px;
 `;

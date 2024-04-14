@@ -12,7 +12,7 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 
 import SideBarMenu from "./SideBarMenu";
 import AddItemModal from "../components/AddItemModal";
-import useIconMaker from "../utils/useIconMaker";
+import iconMaker from "../utils/iconMaker";
 
 import { useAuth } from "../context/AuthContext";
 import { useVisibility } from "../context/VisibilityContext";
@@ -28,7 +28,7 @@ export default function MenuAppBar() {
     itemToEditId,
     handleAddItemModal,
   } = useVisibility();
-  const iconName = useIconMaker(displayName);
+  const iconName = iconMaker(displayName);
 
   const handleSideBarMenuClick = (value) => {
     setSideBarIsOpen(value);

@@ -43,6 +43,7 @@ export function DataProvider({ children }) {
         aisleName: item.aisleName || "--",
         aisleAccentColor: item.aisleAccentColor || "",
         preferredStoreName: item.preferredStoreName || "--",
+        preferredStoreId: item.preferredStoreId,
         notes: item.notes,
       });
     });

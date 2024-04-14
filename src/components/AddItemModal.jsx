@@ -102,7 +102,7 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen, itemId }) {
   const handleChangeStoreSelect = (storeData) => {
     setFormData((prev) => ({
       ...prev,
-      preferredStoreID: storeData.id,
+      preferredStoreId: storeData.id,
       preferredStoreName: storeData.name,
     }));
   };
