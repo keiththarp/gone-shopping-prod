@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function useAscendingOrder() {
-  const [currentCriteria, setCurrentCriteria] = useState("name");
+  const [currentCriteria, setCurrentCriteria] = useState("aisleName");
   const [ascendingOrder, setAscendingOrder] = useState("true");
 
   const sendCriteria = (criteria) => {

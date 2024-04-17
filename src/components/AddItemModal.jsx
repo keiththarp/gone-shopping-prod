@@ -234,6 +234,7 @@ const Textarea = styled(BaseTextareaAutosize)(
   padding: 6px;
   border-radius: 6px 6px 0 6px;
   border: 2px solid #C7D0DD;
+  font-size: 16px;
 
   &:hover {
     border-color: ${theme.palette.primary.main};
