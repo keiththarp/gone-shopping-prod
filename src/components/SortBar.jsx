@@ -11,18 +11,19 @@ import {
 } from "@mui/material";
 import styled from "styled-components";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 import useAscendingOrder from "../hooks/useAscendingOrder";
 import listSorter from "../utils/listSorter";
 
 const sortHeaders = [
   {
-    display: "Name",
-    criteria: "name",
-  },
-  {
     display: "Aisle",
     criteria: "aisleName",
+  },
+  {
+    display: "Name",
+    criteria: "name",
   },
   {
     display: "Store",
@@ -44,7 +45,7 @@ export default function SortBar({ list, results, title }) {
   const [showSortDrawer, setShowSortDrawer] = useState(false);
 
   const [ascendingOrder, currentCriteria, sendCriteria] =
-    useAscendingOrder("name");
+    useAscendingOrder("aisleName");
 
   useEffect(() => {
     results(listSorter(currentCriteria, ascendingOrder, list));
@@ -75,6 +76,12 @@ export default function SortBar({ list, results, title }) {
                     sx={{ display: "inline" }}
                     onClick={() => sendCriteria(header.criteria)}
                   >
+                    {currentCriteria === header.criteria &&
+                      ascendingOrder &&
+                      "▲ "}
+                    {currentCriteria === header.criteria &&
+                      !ascendingOrder &&
+                      "▼ "}
                     {header.display}
                   </ListItemButton>{" "}
                 </ListItem>

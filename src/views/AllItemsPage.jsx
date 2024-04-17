@@ -4,7 +4,6 @@ import styled from "styled-components";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import RemoveCircleOutlineOutlined from "@mui/icons-material/RemoveCircleOutlineOutlined";
@@ -13,10 +12,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import IconButton from "@mui/material/IconButton";
 import CommentIcon from "@mui/icons-material/Comment";
-import SwapVertIcon from "@mui/icons-material/SwapVert";
 import Tooltip from "@mui/material/Tooltip";
-import Button from "@mui/material/Button";
-import { Typography } from "@mui/material";
 import { Collapse } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
@@ -24,6 +20,7 @@ import Box from "@mui/material/Box";
 import { doc, updateDoc, increment } from "firebase/firestore";
 import { db } from "../firebase";
 
+import SortBar from "../components/SortBar";
 import ConfirmDialog from "../components/ConfirmModal";
 
 import { useData } from "../context/DataContext";
@@ -31,31 +28,17 @@ import { useData } from "../context/DataContext";
 const internals = {};
 
 export default function AllItemsPage() {
-  const { ListHeader, DeleteIcon, SortMenu } = internals;
+  const { DeleteIcon } = internals;
 
   const { getAllItems, allItems, deleteData } = useData();
 
   const [expanded, setExpanded] = useState(-1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState("");
-  const [sortDrawer, setSortDrawer] = useState(false);
-  const [orderedItems, setOrderedItems] = useState(allItems);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentCriteria, setCurrentCriteria] = useState("name");
-
-  const handleSort = (criteria) => {
-    setCurrentCriteria(criteria);
-    const sortedList = [...allItems].sort((a, b) => {
-      if (a[criteria] < b[criteria]) return -1;
-      if (a[criteria] > b[criteria]) return 1;
-      return 0;
-    });
-
-    setOrderedItems(sortedList);
-  };
+  const [sortedList, setSortedList] = useState(allItems);
 
   useEffect(() => {
-    handleSort(currentCriteria);
     if (allItems.length > 0) {
       setIsLoading(false);
     }
@@ -83,10 +66,6 @@ export default function AllItemsPage() {
     setExpanded((prev) => (prev === itemId ? -1 : itemId));
   };
 
-  const handleShowSortDrawer = () => {
-    setSortDrawer((prev) => !prev);
-  };
-
   const handleAddToMainList = async (currentStatus, id) => {
     const docRef = doc(db, "items", id);
 
@@ -98,6 +77,10 @@ export default function AllItemsPage() {
     getAllItems();
   };
 
+  const handleSortBarResults = (list) => {
+    setSortedList(list);
+  };
+
   return (
     <>
       <ConfirmDialog
@@ -105,50 +88,8 @@ export default function AllItemsPage() {
         message={"Delete"}
         onConfirm={handleClickDelete}
       />
-      <ListHeader>
-        <Typography variant="h5">Pantry</Typography>
-        <Button onClick={handleShowSortDrawer}>
-          Sort <SwapVertIcon />
-        </Button>
-      </ListHeader>
-      <Collapse in={sortDrawer}>
-        <SortMenu>
-          <List>
-            <ListItem disablePadding disableGutters sx={{ display: "inline" }}>
-              <ListItemButton
-                sx={{ display: "inline" }}
-                onClick={() => handleSort("name")}
-              >
-                Name
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding disableGutters sx={{ display: "inline" }}>
-              <ListItemButton
-                sx={{ display: "inline" }}
-                onClick={() => handleSort("section")}
-              >
-                Sect.
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding disableGutters sx={{ display: "inline" }}>
-              <ListItemButton
-                sx={{ display: "inline" }}
-                onClick={() => handleSort("store")}
-              >
-                Store
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding disableGutters sx={{ display: "inline" }}>
-              <ListItemButton
-                sx={{ display: "inline" }}
-                onClick={() => handleSort("rank")}
-              >
-                Rank
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </SortMenu>
-      </Collapse>
+      <SortBar list={allItems} results={handleSortBarResults} title="Pantry" />
+
       {isLoading ? (
         <Box
           sx={{
@@ -161,7 +102,7 @@ export default function AllItemsPage() {
         </Box>
       ) : (
         <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-          {orderedItems.map((item) => {
+          {sortedList.map((item) => {
             const labelId = `${item.name}`;
 
             return (
@@ -254,20 +195,6 @@ export default function AllItemsPage() {
     </>
   );
 }
-
-internals.ListHeader = styled(Box)`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding-inline: 8px;
-  padding: 10px 8px 0 15px;
-`;
-
-internals.SortMenu = styled(Box)`
-  display: flex;
-`;
 
 internals.DeleteIcon = styled(IconButton)`
   margin: -15px;
