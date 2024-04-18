@@ -184,6 +184,7 @@ export default function AddItemModal({ isOpen, handleAddItemIsOpen, itemId }) {
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
         </FormControl>
+        <p>Hello</p>
         <FormControl>
           <Textarea
             onChange={handleAddItemFormChange}
