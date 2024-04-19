@@ -124,17 +124,6 @@ export default function StoreModal({
           />
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: "255px" }}>
-          <TextField
-            onChange={handleStoreFormChange}
-            inputRef={cityRef}
-            id="city-input"
-            label="City"
-            variant="standard"
-            defaultValue={!!storeToEdit ? storeToEdit.city : ""}
-          />
-        </FormControl>
-
         <FormControl>
           <Textarea
             onChange={handleStoreFormChange}

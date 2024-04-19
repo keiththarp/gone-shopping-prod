@@ -144,7 +144,6 @@ export default function AllStoresPage() {
                   >
                     <EditIcon sx={{ color: "000", fontSize: "23px" }} />
                   </IconButton>
-                  <p>Abbreviation: {store.abbr}</p>
                   <p>
                     Website:{" "}
                     {store.website ? (
@@ -159,7 +158,6 @@ export default function AllStoresPage() {
                       "--"
                     )}
                   </p>
-                  <p>City: {store.city || "--"}</p>
                   <p>Notes: {store.notes || "--"}</p>
                 </Box>
               </Collapse>

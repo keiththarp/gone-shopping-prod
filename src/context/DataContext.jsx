@@ -25,6 +25,7 @@ export function DataProvider({ children }) {
   const [mainList, setMainList] = useState([]);
   const [allStores, setAllStores] = useState([]);
   const [allAisles, setAllAisles] = useState([]);
+  const [usedAccentColors, setUsedAccentColors] = useState([]);
 
   const getAllItems = async () => {
     const querySnapshot = await getDocs(collection(db, "items"));
@@ -64,8 +65,6 @@ export function DataProvider({ children }) {
         id: doc.id,
         name: store.name,
         isFavorite: store.isFavorite || false,
-        abbr: store.abbr,
-        city: store.city,
         website: store.website,
         notes: store.notes,
       });
@@ -120,15 +119,22 @@ export function DataProvider({ children }) {
     getAllAisles();
   }, []);
 
+  useEffect(() => {
+    setUsedAccentColors([
+      ...new Set(allItems.map((item) => item.aisleAccentColor)),
+    ]);
+  }, [allItems]);
+
   const value = {
     allItems,
     mainList,
     allStores,
     allAisles,
+    usedAccentColors,
+    deleteData,
     getAllItems,
     getAllStores,
     getAllAisles,
-    deleteData,
     updateRelatedItems,
   };
 

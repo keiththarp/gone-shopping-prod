@@ -11,6 +11,7 @@ import {
 import Grid from "@mui/material/Grid";
 import Alert from "@mui/material/Alert";
 import SquareIcon from "@mui/icons-material/Square";
+import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 
@@ -45,7 +46,8 @@ export default function AisleModal({
   const nameRef = useRef();
   const notesRef = useRef();
 
-  const { getAllAisles, allAisles, updateRelatedItems } = useData();
+  const { getAllAisles, allAisles, updateRelatedItems, usedAccentColors } =
+    useData();
   const aisleToEdit = allAisles.find((aisle) => aisle.id === aisleId);
 
   const [formData, setFormData] = useState({});
@@ -145,21 +147,39 @@ export default function AisleModal({
         <Grid container spacing={1}>
           {colors.map((color, index) => (
             <Grid item xs={3} key={index}>
-              <SquareIcon
-                onClick={() => handleAccentColor(color)}
-                sx={{
-                  color:
-                    color === accentColor
-                      ? `rgb(${color})`
-                      : `rgb(${color}, 0.5)`,
-                  cursor: "pointer",
-                  border:
-                    color === accentColor ? `3px solid rgb(${color})` : "none",
-                  "&:hover": {
-                    color: `rgba(${color}, 1)`,
-                  },
-                }}
-              />
+              {usedAccentColors.includes(color) ? (
+                <DisabledByDefaultIcon
+                  sx={{
+                    color: `rgb(${color}, 0.5)`,
+                    cursor: "pointer",
+                    border:
+                      color === accentColor
+                        ? `3px solid rgb(${color})`
+                        : "none",
+                    "&:hover": {
+                      color: `rgba(${color}, 1)`,
+                    },
+                  }}
+                />
+              ) : (
+                <SquareIcon
+                  onClick={() => handleAccentColor(color)}
+                  sx={{
+                    color:
+                      color === accentColor
+                        ? `rgb(${color})`
+                        : `rgb(${color}, 0.5)`,
+                    cursor: "pointer",
+                    border:
+                      color === accentColor
+                        ? `3px solid rgb(${color})`
+                        : "none",
+                    "&:hover": {
+                      color: `rgba(${color}, 1)`,
+                    },
+                  }}
+                />
+              )}
             </Grid>
           ))}
         </Grid>
