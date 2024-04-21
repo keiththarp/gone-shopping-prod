@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import { Typography } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
+import ProgressSpinner from "../components/ProgressSpinner";
 
 import SortBar from "../components/SortBar";
 import GroceryItem from "../components/GroceryItem";
@@ -15,6 +15,9 @@ export default function MainListPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [sortedList, setSortedList] = useState(mainList);
+
+  const incompleteItems = sortedList.filter((item) => item.isChecked === false);
+  const completedItems = sortedList.filter((item) => item.isChecked === true);
 
   useEffect(() => {
     if (mainList.length > 0) {
@@ -34,32 +37,32 @@ export default function MainListPage() {
         title="Main List"
       />
       {isLoading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            paddingTop: "50px",
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <ProgressSpinner />
       ) : (
         <Box>
-          <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-            {sortedList
-              .filter((item) => item.isChecked === false)
-              .map((item) => {
-                return <GroceryItem key={item.id} item={item} />;
-              })}
-          </List>
-          <Typography>Completed</Typography>
-          <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-            {sortedList
-              .filter((item) => item.isChecked === true)
-              .map((item) => {
-                return <GroceryItem key={item.id} item={item} />;
-              })}
-          </List>
+          {incompleteItems.length > 0 ? (
+            <>
+              <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+                {incompleteItems.map((item) => (
+                  <GroceryItem key={item.id} item={item} location="main" />
+                ))}
+              </List>
+            </>
+          ) : (
+            <Typography sx={{ textAlign: "center", paddingTop: "15px" }}>
+              No items added to Main list
+            </Typography>
+          )}
+          {completedItems.length > 0 && (
+            <>
+              <Typography>Completed</Typography>
+              <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+                {completedItems.map((item) => (
+                  <GroceryItem key={item.id} item={item} location="main" />
+                ))}
+              </List>
+            </>
+          )}
         </Box>
       )}
     </>

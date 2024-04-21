@@ -20,7 +20,7 @@ import Box from "@mui/material/Box";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-import ConfirmDialog from "../components/ConfirmModal";
+import ConfirmDialog from "../components/modals/ConfirmModal";
 import AisleModal from "../components/modals/AisleModal";
 
 import { useData } from "../context/DataContext";

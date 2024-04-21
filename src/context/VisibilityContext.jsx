@@ -10,6 +10,9 @@ export function VisibilityProvider({ children }) {
   const [storeModalIsOpen, setStoreModalIsOpen] = useState(false);
   const [showItemModal, setShowItemModal] = useState(false);
   const [itemToEditId, setItemToEditId] = useState();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [collectionToEdit, setCollectionToEdit] = useState("");
 
   const handleStoreModalIsOpen = (value) => {
     setStoreModalIsOpen(value);
@@ -20,14 +23,26 @@ export function VisibilityProvider({ children }) {
     setShowItemModal(visible);
   };
 
+  const handleConfirmModal = (visibility, message, id, collection, method) => {
+    setShowConfirmModal(visibility);
+    setConfirmMessage(message);
+    setItemToEditId(id);
+    setCollectionToEdit(collection);
+  };
+
   useEffect(() => {}, []);
 
   const value = {
     handleStoreModalIsOpen,
+    setShowConfirmModal,
     handleAddItemModal,
+    handleConfirmModal,
     storeModalIsOpen,
     showItemModal,
     itemToEditId,
+    showConfirmModal,
+    confirmMessage,
+    collectionToEdit,
   };
 
   return (
