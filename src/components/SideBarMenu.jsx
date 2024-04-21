@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import { styled } from "@mui/system";
@@ -15,42 +13,15 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemButton from "@mui/material/ListItemButton";
 
-import ConfirmModal from "./ConfirmModal";
 import ListMenuItem from "./ListMenuItem";
-import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
+import { useVisibility } from "../context/VisibilityContext";
 
 const internals = {};
 
 export default function SideBarMenu({ isOpen, toggleDrawer }) {
   const { allStores } = useData();
-
-  const [showModal, setShowModal] = useState(false);
-  const { currentUser, logout } = useAuth();
-
-  const navigate = useNavigate();
-
-  const handleLogoutClick = () => {
-    setShowModal(true);
-  };
-
-  const handleLogoutModal = async (confirmLogout) => {
-    console.log(confirmLogout, " handle logout");
-    if (!confirmLogout) {
-      setShowModal((prev) => !prev);
-      console.log("cancel");
-      return;
-    }
-    try {
-      await logout();
-      setShowModal((prev) => !prev);
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      // navigate("/signin");
-    } catch {
-      console.log("error", currentUser);
-    }
-    return;
-  };
+  const { handleConfirmModal } = useVisibility();
 
   const DrawerList = (
     <Box
@@ -91,20 +62,18 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
       </List>
 
       <Divider />
-      <ListMenuItem link="/all-items" icon="list" title="Pantry" />
       <SectionBox>
         <Typography>Add/Edit</Typography>
       </SectionBox>
       <List>
+        <ListMenuItem link="/all-items" icon="list" title="Pantry" />
         <ListMenuItem link="/all-stores" icon="store" title="Stores" />
-      </List>
-      <List>
         <ListMenuItem link="/all-aisles" icon="store" title="Aisles" />
       </List>
 
       <Divider />
 
-      <ListItemButton onClick={handleLogoutClick}>
+      <ListItemButton onClick={() => handleConfirmModal(true, "Logout")}>
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>
@@ -115,7 +84,6 @@ export default function SideBarMenu({ isOpen, toggleDrawer }) {
 
   return (
     <>
-      <ConfirmModal isOpen={showModal} onConfirm={handleLogoutModal} />
       <Drawer
         open={isOpen}
         onClose={() => {

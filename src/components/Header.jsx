@@ -12,6 +12,7 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 
 import SideBarMenu from "./SideBarMenu";
 import AddItemModal from "../components/AddItemModal";
+import ConfirmDialog from "./modals/ConfirmModal";
 import iconMaker from "../utils/iconMaker";
 
 import { useAuth } from "../context/AuthContext";
@@ -27,6 +28,7 @@ export default function MenuAppBar() {
     showItemModal,
     itemToEditId,
     handleAddItemModal,
+    confirmMessage,
   } = useVisibility();
   const iconName = iconMaker(displayName);
 
@@ -45,6 +47,7 @@ export default function MenuAppBar() {
         handleAddItemIsOpen={handleAddItemModal}
         itemId={itemToEditId}
       />
+      <ConfirmDialog />
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="fixed" elevation={0}>
           <Toolbar>
